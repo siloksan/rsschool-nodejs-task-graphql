@@ -15,7 +15,7 @@ export async function memberByIdResolve(
   { id }: { id: MemberTypeId },
   { prisma }: ContextPrisma,
 ) {
-  if (id in MEMBER_TYPE_ID) {
+  if (!(id in MEMBER_TYPE_ID)) {
     throw new Error(`Invalid MemberTypeId: ${id}`);
   }
 
