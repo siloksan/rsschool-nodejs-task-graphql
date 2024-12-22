@@ -1,6 +1,7 @@
 import { GraphQLObjectType, GraphQLInt, GraphQLBoolean, GraphQLNonNull } from 'graphql';
 import { UUIDType } from './uuid.js';
-import { MemberTypeIdEnumGQL } from './member.js';
+import { MemberTypeGQL } from './member.js';
+import { ContextPrisma } from './common.js';
 
 const ProfileType = {
   isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
@@ -14,7 +15,24 @@ export const ProfileTypeGQL = new GraphQLObjectType({
     id: { type: UUIDType },
     isMale: { type: GraphQLBoolean },
     yearOfBirth: { type: GraphQLInt },
-    memberTypeId: { type: MemberTypeIdEnumGQL },
     userId: { type: UUIDType },
+    memberType: {
+      type: MemberTypeGQL,
+      resolve: async (
+        parent: {
+          memberTypeId: string;
+        },
+        _,
+        { prisma }: ContextPrisma,
+      ) => {
+        const memberType = await prisma.memberType.findUnique({
+          where: {
+            id: parent.memberTypeId,
+          },
+        });
+
+        return memberType;
+      },
+    },
   },
 });

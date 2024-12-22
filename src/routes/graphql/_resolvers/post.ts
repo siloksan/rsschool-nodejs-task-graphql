@@ -15,19 +15,11 @@ export async function postByIdResolve(
   { id }: { id: string },
   { prisma }: ContextPrisma,
 ) {
-  if (!isUUID(id)) {
-    throw new Error(`Invalid PostId`);
-  }
-
   const post = await prisma.post.findUnique({
     where: {
       id,
     },
   });
-
-  if (post === null) {
-    throw new Error(`Post type don't found.`);
-  }
 
   return post;
 }

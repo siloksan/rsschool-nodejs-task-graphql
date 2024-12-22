@@ -15,19 +15,11 @@ export async function memberByIdResolve(
   { id }: { id: MemberTypeId },
   { prisma }: ContextPrisma,
 ) {
-  if (!(id in MEMBER_TYPE_ID)) {
-    throw new Error(`Invalid MemberTypeId: ${id}`);
-  }
-
   const memberType = await prisma.memberType.findUnique({
     where: {
       id,
     },
   });
-
-  if (memberType === null) {
-    throw new Error(`Member type don't found.`);
-  }
 
   return memberType;
 }

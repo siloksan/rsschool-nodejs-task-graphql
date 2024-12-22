@@ -14,6 +14,8 @@ import { PostGQL } from './types/post.js';
 import { UUIDType } from './types/uuid.js';
 import { profileByIdResolve, profilesResolve } from './_resolvers/profile.js';
 import { ProfileTypeGQL } from './types/profile.js';
+import { userByIdResolve, usersResolve } from './_resolvers/user.js';
+import { UserTypeGQL } from './types/user.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -78,6 +80,19 @@ const RootQuery = new GraphQLObjectType({
         id: { type: UUIDType },
       },
       resolve: profileByIdResolve,
+    },
+
+    // user
+    users: {
+      type: new GraphQLList(UserTypeGQL),
+      resolve: usersResolve,
+    },
+    user: {
+      type: UserTypeGQL,
+      args: {
+        id: { type: UUIDType },
+      },
+      resolve: userByIdResolve,
     },
   },
 });
