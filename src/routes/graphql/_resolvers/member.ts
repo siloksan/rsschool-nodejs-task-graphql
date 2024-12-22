@@ -1,13 +1,6 @@
-import { MemberType, PrismaClient } from '@prisma/client';
+import { MemberType } from '@prisma/client';
 import { MEMBER_TYPE_ID, MemberTypeId } from '../types/member.js';
-
-interface ContextPrisma {
-  prisma: PrismaClient;
-}
-
-interface ArgsId {
-  id: MemberTypeId;
-}
+import { ContextPrisma } from '../types/common.js';
 
 export async function memberResolve(
   _: unknown,
@@ -19,7 +12,7 @@ export async function memberResolve(
 
 export async function memberByIdResolve(
   _: unknown,
-  { id }: ArgsId,
+  { id }: { id: MemberTypeId },
   { prisma }: ContextPrisma,
 ) {
   if (id in MEMBER_TYPE_ID) {

@@ -9,6 +9,9 @@ import {
 } from 'graphql';
 import { MemberTypeGQL } from './types/member.js';
 import { memberByIdResolve, memberResolve } from './_resolvers/member.js';
+import { postByIdResolve, postsResolve } from './_resolvers/post.js';
+import { PostGQL } from './types/post.js';
+import { UUIDType } from './types/uuid.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -36,10 +39,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
 const RootQuery = new GraphQLObjectType({
   name: 'RootQuery',
   fields: {
-    test: {
-      type: GraphQLString,
-      resolve: async () => 'Hello GraphQl, I"m John!',
-    },
+    // member-type
     memberTypes: {
       type: new GraphQLList(MemberTypeGQL),
       resolve: memberResolve,
@@ -47,9 +47,22 @@ const RootQuery = new GraphQLObjectType({
     memberType: {
       type: MemberTypeGQL,
       args: {
-        id: { type: GraphQLString },
+        id: { type: UUIDType },
       },
       resolve: memberByIdResolve,
+    },
+
+    // post
+    posts: {
+      type: new GraphQLList(PostGQL),
+      resolve: postsResolve,
+    },
+    post: {
+      type: PostGQL,
+      args: {
+        id: { type: GraphQLString },
+      },
+      resolve: postByIdResolve,
     },
   },
 });

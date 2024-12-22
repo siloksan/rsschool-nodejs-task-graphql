@@ -14,7 +14,7 @@ export const MemberTypeIdEnumGQL = new GraphQLEnumType({
     BUSINESS: { value: MEMBER_TYPE_ID.BUSINESS },
   },
 });
-// Определяем тип MemberType
+
 export const MemberTypeGQL = new GraphQLObjectType({
   name: 'MemberType',
   fields: {
