@@ -2,8 +2,9 @@ import {
   GraphQLString,
   GraphQLFloat,
   GraphQLList,
-  GraphQLInterfaceType,
   GraphQLObjectType,
+  GraphQLInputObjectType,
+  GraphQLNonNull,
 } from 'graphql';
 import { UUIDType } from './uuid.js';
 import { ProfileTypeGQL } from './profile.js';
@@ -63,4 +64,20 @@ export const UserTypeGQL: GraphQLObjectType = new GraphQLObjectType({
       },
     },
   }),
+});
+
+export const UserInputGQL = new GraphQLInputObjectType({
+  name: 'CreateUserInput',
+  fields: {
+    name: { type: new GraphQLNonNull(GraphQLString) },
+    balance: { type: new GraphQLNonNull(GraphQLFloat) },
+  },
+});
+
+export const UserChangeInputGQL = new GraphQLInputObjectType({
+  name: 'ChangeUserInput',
+  fields: {
+    name: { type: GraphQLString },
+    balance: { type: GraphQLFloat },
+  },
 });

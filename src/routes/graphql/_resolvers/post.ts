@@ -1,6 +1,5 @@
 import { Post } from '@prisma/client';
 import { ContextPrisma } from '../types/common.js';
-import { isUUID } from '../types/uuid.js';
 
 export async function postsResolve(
   _: unknown,
@@ -24,12 +23,35 @@ export async function postByIdResolve(
   return post;
 }
 
-// export async function createPostResolve(
-//   _: unknown,
-//   args: Omit<Post, 'id'>,
-//   { prisma }: ContextPrisma,
-// ) {
-//   return prisma.post.create({
-//     data: args,
-//   });
-// }
+export async function createPostResolve(
+  _: unknown,
+  { dto }: { dto: Omit<Post, 'id'> },
+  { prisma }: ContextPrisma,
+) {
+  return prisma.post.create({
+    data: dto,
+  });
+}
+
+export async function changePostResolve(
+  _: unknown,
+  { dto, id }: { id: string; dto: Omit<Post, 'id' | 'authorId'> },
+  { prisma }: ContextPrisma,
+) {
+  return prisma.post.update({
+    where: { id },
+    data: dto,
+  });
+}
+
+export async function deletePostResolve(
+  _: unknown,
+  { id }: { id: string },
+  { prisma }: ContextPrisma,
+) {
+  await prisma.post.delete({
+    where: {
+      id: id,
+    },
+  });
+}

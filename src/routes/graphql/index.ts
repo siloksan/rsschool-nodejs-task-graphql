@@ -1,21 +1,44 @@
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { createGqlResponseSchema, gqlResponseSchema } from './schemas.js';
 import {
+  GraphQLBoolean,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
-  GraphQLString,
   graphql,
 } from 'graphql';
 import { MemberTypeGQL, MemberTypeIdEnumGQL } from './types/member.js';
 import { memberByIdResolve, memberResolve } from './_resolvers/member.js';
-import { postByIdResolve, postsResolve } from './_resolvers/post.js';
-import { PostGQL } from './types/post.js';
+import {
+  changePostResolve,
+  createPostResolve,
+  deletePostResolve,
+  postByIdResolve,
+  postsResolve,
+} from './_resolvers/post.js';
+import { CreatePostInputGQL, PostChangeInputGQL, PostGQL } from './types/post.js';
 import { UUIDType } from './types/uuid.js';
-import { profileByIdResolve, profilesResolve } from './_resolvers/profile.js';
-import { ProfileTypeGQL } from './types/profile.js';
-import { userByIdResolve, usersResolve } from './_resolvers/user.js';
-import { UserTypeGQL } from './types/user.js';
+import {
+  changeProfileResolve,
+  createProfileResolve,
+  deleteProfileResolve,
+  profileByIdResolve,
+  profilesResolve,
+} from './_resolvers/profile.js';
+import {
+  ProfileChangeInputGQL,
+  ProfileInputGQL,
+  ProfileTypeGQL,
+} from './types/profile.js';
+import {
+  changeUserResolve,
+  createUserResolve,
+  deleteUserResolve,
+  userByIdResolve,
+  usersResolve,
+} from './_resolvers/user.js';
+import { UserChangeInputGQL, UserInputGQL, UserTypeGQL } from './types/user.js';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -97,8 +120,78 @@ const RootQuery = new GraphQLObjectType({
   },
 });
 
+const Mutation = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: {
+    // post
+    createPost: {
+      type: PostGQL,
+      args: { dto: { type: new GraphQLNonNull(CreatePostInputGQL) } },
+      resolve: createPostResolve,
+    },
+    changePost: {
+      type: PostGQL,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+        dto: { type: new GraphQLNonNull(PostChangeInputGQL) },
+      },
+      resolve: changePostResolve,
+    },
+    deletePost: {
+      type: GraphQLBoolean,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+      },
+      resolve: deletePostResolve,
+    },
+    // profile
+    createProfile: {
+      type: ProfileTypeGQL,
+      args: { dto: { type: new GraphQLNonNull(ProfileInputGQL) } },
+      resolve: createProfileResolve,
+    },
+    changeProfile: {
+      type: ProfileTypeGQL,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+        dto: { type: new GraphQLNonNull(ProfileChangeInputGQL) },
+      },
+      resolve: changeProfileResolve,
+    },
+    deleteProfile: {
+      type: GraphQLBoolean,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+      },
+      resolve: deleteProfileResolve,
+    },
+    // user
+    createUser: {
+      type: UserTypeGQL,
+      args: { dto: { type: new GraphQLNonNull(UserInputGQL) } },
+      resolve: createUserResolve,
+    },
+    changeUser: {
+      type: UserTypeGQL,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+        dto: { type: new GraphQLNonNull(UserChangeInputGQL) },
+      },
+      resolve: changeUserResolve,
+    },
+    deleteUser: {
+      type: GraphQLBoolean,
+      args: {
+        id: { type: new GraphQLNonNull(UUIDType) },
+      },
+      resolve: deleteUserResolve,
+    },
+  },
+});
+
 const schema = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation,
 });
 
 export default plugin;

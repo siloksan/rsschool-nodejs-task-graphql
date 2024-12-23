@@ -1,13 +1,13 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLBoolean, GraphQLNonNull } from 'graphql';
+import {
+  GraphQLObjectType,
+  GraphQLInt,
+  GraphQLBoolean,
+  GraphQLNonNull,
+  GraphQLInputObjectType,
+} from 'graphql';
 import { UUIDType } from './uuid.js';
-import { MemberTypeGQL } from './member.js';
+import { MemberTypeGQL, MemberTypeIdEnumGQL } from './member.js';
 import { ContextPrisma } from './common.js';
-
-const ProfileType = {
-  isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
-  yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
-  memberTypeId: { type: new GraphQLNonNull(UUIDType) },
-};
 
 export const ProfileTypeGQL = new GraphQLObjectType({
   name: 'Profile',
@@ -34,5 +34,24 @@ export const ProfileTypeGQL = new GraphQLObjectType({
         return memberType;
       },
     },
+  },
+});
+
+export const ProfileInputGQL = new GraphQLInputObjectType({
+  name: 'CreateProfileInput',
+  fields: {
+    isMale: { type: new GraphQLNonNull(GraphQLBoolean) },
+    yearOfBirth: { type: new GraphQLNonNull(GraphQLInt) },
+    userId: { type: new GraphQLNonNull(UUIDType) },
+    memberTypeId: { type: new GraphQLNonNull(MemberTypeIdEnumGQL) },
+  },
+});
+
+export const ProfileChangeInputGQL = new GraphQLInputObjectType({
+  name: 'ChangeProfileInput',
+  fields: {
+    isMale: { type: GraphQLBoolean },
+    yearOfBirth: { type: GraphQLInt },
+    memberTypeId: { type: MemberTypeIdEnumGQL },
   },
 });

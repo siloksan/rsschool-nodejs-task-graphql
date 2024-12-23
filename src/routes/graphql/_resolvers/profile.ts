@@ -22,3 +22,36 @@ export async function profileByIdResolve(
 
   return profile;
 }
+
+export async function createProfileResolve(
+  _: unknown,
+  { dto }: { dto: Omit<Profile, 'id'> },
+  { prisma }: ContextPrisma,
+) {
+  return prisma.profile.create({
+    data: dto,
+  });
+}
+
+export async function changeProfileResolve(
+  _: unknown,
+  { dto, id }: { id: string; dto: Omit<Profile, 'id' | 'userId'> },
+  { prisma }: ContextPrisma,
+) {
+  return prisma.profile.update({
+    where: { id },
+    data: dto,
+  });
+}
+
+export async function deleteProfileResolve(
+  _: unknown,
+  { id }: { id: string },
+  { prisma }: ContextPrisma,
+) {
+  await prisma.profile.delete({
+    where: {
+      id: id,
+    },
+  });
+}
