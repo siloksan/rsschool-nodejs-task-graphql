@@ -7,6 +7,9 @@ import {
   GraphQLObjectType,
   GraphQLSchema,
   graphql,
+  parse,
+  specifiedRules,
+  validate,
 } from 'graphql';
 import { MemberTypeGQL, MemberTypeIdEnumGQL } from './types/member.js';
 import { memberByIdResolve, memberResolve } from './_resolvers/member.js';
@@ -39,6 +42,7 @@ import {
   usersResolve,
 } from './_resolvers/user.js';
 import { UserChangeInputGQL, UserInputGQL, UserTypeGQL } from './types/user.js';
+import depthLimit from 'graphql-depth-limit';
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   const { prisma } = fastify;
@@ -52,11 +56,24 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         200: gqlResponseSchema,
       },
     },
-    async handler(req) {
+    async handler(req, res) {
+      const { query, variables } = req.body;
+      const document = parse(query);
+
+      const validationErrors = validate(schema, document, [
+        ...specifiedRules,
+        depthLimit(5),
+      ]);
+
+      if (validationErrors.length > 0) {
+        await res.code(400).send({ errors: validationErrors });
+        return;
+      }
+
       return graphql({
         schema,
-        source: req.body.query,
-        variableValues: req.body.variables,
+        source: query,
+        variableValues: variables,
         contextValue: { prisma },
       });
     },
