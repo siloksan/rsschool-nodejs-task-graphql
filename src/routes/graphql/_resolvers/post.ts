@@ -12,13 +12,9 @@ export async function postsResolve(
 export async function postByIdResolve(
   _: unknown,
   { id }: { id: string },
-  { prisma }: ContextPrisma,
+  { loaders }: ContextPrisma,
 ) {
-  const post = await prisma.post.findUnique({
-    where: {
-      id,
-    },
-  });
+  const post = await loaders.postByIdLoader.load(id);
 
   return post;
 }

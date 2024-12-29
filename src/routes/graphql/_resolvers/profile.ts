@@ -12,13 +12,9 @@ export async function profilesResolve(
 export async function profileByIdResolve(
   _: unknown,
   { id }: { id: string },
-  { prisma }: ContextPrisma,
+  { loaders }: ContextPrisma,
 ) {
-  const profile = await prisma.profile.findUnique({
-    where: {
-      id,
-    },
-  });
+  const profile = await loaders.profileByIdLoader.load(id);
 
   return profile;
 }

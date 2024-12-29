@@ -1,5 +1,5 @@
 import { MemberType } from '@prisma/client';
-import { MEMBER_TYPE_ID, MemberTypeId } from '../types/member.js';
+import { MemberTypeId } from '../types/member.js';
 import { ContextPrisma } from '../types/common.js';
 
 export async function memberResolve(
@@ -13,13 +13,7 @@ export async function memberResolve(
 export async function memberByIdResolve(
   _: unknown,
   { id }: { id: MemberTypeId },
-  { prisma }: ContextPrisma,
+  { loaders }: ContextPrisma,
 ) {
-  const memberType = await prisma.memberType.findUnique({
-    where: {
-      id,
-    },
-  });
-
-  return memberType;
+  return await loaders.memberTypeByIdLoader.load(id);
 }

@@ -1,18 +1,17 @@
 import { GraphQLObjectType, GraphQLFloat, GraphQLInt, GraphQLEnumType } from 'graphql';
 
-export const MEMBER_TYPE_ID = {
-  BASIC: 'BASIC',
-  BUSINESS: 'BUSINESS',
-} as const;
+const MEMBER_TYPE_ID = ['BASIC', 'BUSINESS'] as const;
 
-export type MemberTypeId = keyof typeof MEMBER_TYPE_ID;
+export type MemberTypeId = (typeof MEMBER_TYPE_ID)[number];
 
 export const MemberTypeIdEnumGQL = new GraphQLEnumType({
   name: 'MemberTypeId',
-  values: {
-    BASIC: { value: MEMBER_TYPE_ID.BASIC },
-    BUSINESS: { value: MEMBER_TYPE_ID.BUSINESS },
-  },
+  values: Object.assign(
+    {},
+    ...MEMBER_TYPE_ID.map((item) => ({
+      [item]: { value: item },
+    })),
+  ) as Record<MemberTypeId, { value: MemberTypeId }>,
 });
 
 export const MemberTypeGQL = new GraphQLObjectType({

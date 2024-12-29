@@ -23,15 +23,9 @@ export const ProfileTypeGQL = new GraphQLObjectType({
           memberTypeId: string;
         },
         _,
-        { prisma }: ContextPrisma,
+        { loaders }: ContextPrisma,
       ) => {
-        const memberType = await prisma.memberType.findUnique({
-          where: {
-            id: parent.memberTypeId,
-          },
-        });
-
-        return memberType;
+        return await loaders.memberTypeByIdLoader.load(parent.memberTypeId);
       },
     },
   },
