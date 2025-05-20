@@ -93,3 +93,31 @@ export async function deleteUserResolve(
     },
   });
 }
+
+export async function subscribeToUser(
+  _: unknown,
+  args: { userId: string; authorId: string },
+  { prisma }: ContextPrisma,
+) {
+  await prisma.subscribersOnAuthors.create({
+    data: {
+      subscriberId: args.userId,
+      authorId: args.authorId,
+    },
+  });
+}
+
+export async function unsubscribeFrom(
+  _: unknown,
+  args: { userId: string; authorId: string },
+  { prisma }: ContextPrisma,
+) {
+  await prisma.subscribersOnAuthors.delete({
+    where: {
+      subscriberId_authorId: {
+        subscriberId: args.userId,
+        authorId: args.authorId,
+      },
+    },
+  });
+}

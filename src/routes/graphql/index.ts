@@ -6,6 +6,7 @@ import {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
+  GraphQLString,
   graphql,
   parse,
   specifiedRules,
@@ -38,6 +39,8 @@ import {
   changeUserResolve,
   createUserResolve,
   deleteUserResolve,
+  subscribeToUser,
+  unsubscribeFrom,
   userByIdResolve,
   usersResolve,
 } from './_resolvers/user.js';
@@ -209,6 +212,23 @@ const Mutation = new GraphQLObjectType({
         id: { type: new GraphQLNonNull(UUIDType) },
       },
       resolve: deleteUserResolve,
+    },
+    // subscribe
+    subscribeTo: {
+      type: GraphQLString,
+      args: {
+        userId: { type: new GraphQLNonNull(UUIDType) },
+        authorId: { type: new GraphQLNonNull(UUIDType) },
+      },
+      resolve: subscribeToUser,
+    },
+    unsubscribeFrom: {
+      type: GraphQLString,
+      args: {
+        userId: { type: new GraphQLNonNull(UUIDType) },
+        authorId: { type: new GraphQLNonNull(UUIDType) },
+      },
+      resolve: unsubscribeFrom,
     },
   },
 });
